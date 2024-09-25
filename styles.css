@@ -158,8 +158,12 @@ footer {
     }
 
     .button {
-        width: 100%;
+        width: calc(100% - 30px); /* Кнопка займёт всю ширину, учитывая отступы */
         padding: 15px;
         font-size: 1rem;
+        box-sizing: border-box; /* Гарантирует, что padding будет учитываться в ширине */
+        max-width: 400px; /* Ограничиваем максимальную ширину для кнопки */
+        margin: 0 auto; /* Центрируем кнопку внутри секции */
+        display: block;
     }
 }
