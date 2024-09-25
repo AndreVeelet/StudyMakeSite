@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Invaders</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Player
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 30,
+            width: 50,
+            height: 30,
+            dx: 5
+        };
+
+        // Enemies
+        const enemies = [];
+        const enemyRows = 5;
+        const enemyCols = 10;
+        const enemyWidth = 40;
+        const enemyHeight = 30;
+        const enemyPadding = 10;
+        const enemyOffsetTop = 30;
+        const enemyOffsetLeft = 30;
+        const enemySpeed = 0.5;
+        let enemyDirection = 1;
+
+        // Bullets
+        const bullets = [];
+        const bulletWidth = 3;
+        const bulletHeight = 10;
+        const bulletSpeed = 5;
+
+        let score = 0;
+
+        // Create enemies
+        for (let r = 0; r < enemyRows; r++) {
+            for (let c = 0; c < enemyCols; c++) {
+                enemies.push({
+                    x: c * (enemyWidth + enemyPadding) + enemyOffsetLeft,
+                    y: r * (enemyHeight + enemyPadding) + enemyOffsetTop,
+                    width: enemyWidth,
+                    height: enemyHeight
+                });
+            }
+        }
+
+        // Draw player
+        function drawPlayer() {
+            ctx.fillStyle = 'lime';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        // Draw enemies
+        function drawEnemies() {
+            enemies.forEach(enemy => {
+                ctx.fillStyle = 'red';
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+            });
+        }
+
+        // Draw bullets
+        function drawBullets() {
+            bullets.forEach(bullet => {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(bullet.x, bullet.y, bulletWidth, bulletHeight);
+            });
+        }
+
+        // Draw score
+        function drawScore() {
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.fillText(`Score: ${score}`, 10, 25);
+        }
+
+        // Move player
+        function movePlayer(direction) {
+            if (direction === 'left' && player.x > 0) {
+                player.x -= player.dx;
+            } else if (direction === 'right' && player.x < canvas.width - player.width) {
+                player.x += player.dx;
+            }
+        }
+
+        // Shoot bullet
+        function shoot() {
+            bullets.push({
+                x: player.x + player.width / 2 - bulletWidth / 2,
+                y: player.y
+            });
+        }
+
+        // Update game state
+        function update() {
+            // Move bullets
+            bullets.forEach((bullet, index) => {
+                bullet.y -= bulletSpeed;
+                if (bullet.y < 0) {
+                    bullets.splice(index, 1);
+                }
+            });
+
+            // Move enemies
+            let changeDirection = false;
+            enemies.forEach(enemy => {
+                enemy.x += enemySpeed * enemyDirection;
+                if (enemy.x <= 0 || enemy.x + enemy.width >= canvas.width) {
+                    changeDirection = true;
+                }
+            });
+
+            if (changeDirection) {
+                enemyDirection *= -1;
+                enemies.forEach(enemy => {
+                    enemy.y += enemyHeight;
+                });
+            }
+
+            // Check collisions
+            bullets.forEach((bullet, bulletIndex) => {
+                enemies.forEach((enemy, enemyIndex) => {
+                    if (
+                        bullet.x < enemy.x + enemy.width &&
+                        bullet.x + bulletWidth > enemy.x &&
+                        bullet.y < enemy.y + enemy.height &&
+                        bullet.y + bulletHeight > enemy.y
+                    ) {
+                        bullets.splice(bulletIndex, 1);
+                        enemies.splice(enemyIndex, 1);
+                        score += 10;
+                    }
+                });
+            });
+        }
+
+        // Game loop
+        function gameLoop() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            drawPlayer();
+            drawEnemies();
+            drawBullets();
+            drawScore();
+            
+            update();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                movePlayer('left');
+            } else if (e.key === 'ArrowRight') {
+                movePlayer('right');
+            } else if (e.key === ' ') {
+                shoot();
+            }
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html>

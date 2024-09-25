@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #game {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            background-color: #333;
+            border-radius: 50%;
+            padding: 10px;
+        }
+        .btn {
+            width: 150px;
+            height: 150px;
+            border: none;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+        .btn:hover {
+            opacity: 1;
+        }
+        #green { background-color: green; border-top-left-radius: 100%; }
+        #red { background-color: red; border-top-right-radius: 100%; }
+        #yellow { background-color: yellow; border-bottom-left-radius: 100%; }
+        #blue { background-color: blue; border-bottom-right-radius: 100%; }
+        #start {
+            position: absolute;
+            font-size: 1.5em;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <button class="btn" id="green"></button>
+        <button class="btn" id="red"></button>
+        <button class="btn" id="yellow"></button>
+        <button class="btn" id="blue"></button>
+    </div>
+    <button id="start">Start</button>
+
+    <script>
+        const buttons = ['green', 'red', 'yellow', 'blue'];
+        let gameSequence = [];
+        let playerSequence = [];
+        let level = 0;
+
+        const startButton = document.getElementById('start');
+        startButton.addEventListener('click', startGame);
+
+        buttons.forEach(color => {
+            const button = document.getElementById(color);
+            button.addEventListener('click', () => buttonClick(color));
+        });
+
+        function startGame() {
+            gameSequence = [];
+            playerSequence = [];
+            level = 0;
+            nextRound();
+        }
+
+        function nextRound() {
+            level++;
+            playerSequence = [];
+            startButton.textContent = `Level ${level}`;
+            const randomColor = buttons[Math.floor(Math.random() * buttons.length)];
+            gameSequence.push(randomColor);
+            playSequence();
+        }
+
+        function playSequence() {
+            let i = 0;
+            const interval = setInterval(() => {
+                const color = gameSequence[i];
+                flashButton(color);
+                i++;
+                if (i >= gameSequence.length) {
+                    clearInterval(interval);
+                }
+            }, 600);
+        }
+
+        function buttonClick(color) {
+            playerSequence.push(color);
+            flashButton(color);
+            checkSequence();
+        }
+
+        function checkSequence() {
+            if (playerSequence[playerSequence.length - 1] !== gameSequence[playerSequence.length - 1]) {
+                gameOver();
+                return;
+            }
+            if (playerSequence.length === gameSequence.length) {
+                if (playerSequence.length === 20) {
+                    alert('Congratulations! You won the game!');
+                    startGame();
+                } else {
+                    setTimeout(nextRound, 1000);
+                }
+            }
+        }
+
+        function gameOver() {
+            alert(`Game Over! You reached level ${level}`);
+            startGame();
+        }
+
+        function flashButton(color) {
+            const button = document.getElementById(color);
+            button.style.opacity = 1;
+            setTimeout(() => {
+                button.style.opacity = 0.6;
+            }, 300);
+        }
+    </script>
+</body>
+</html>

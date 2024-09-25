@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра Змейка</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        canvas {
+            border: 1px solid #000;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const box = 20; // размер клетки
+        let snake = [{ x: 9 * box, y: 9 * box }]; // начальная позиция змейки
+        let direction = 'RIGHT'; // начальное направление
+        let food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box }; // начальная позиция еды
+
+        // управление клавиатурой
+        document.addEventListener('keydown', event => {
+            if (event.key === 'ArrowLeft' && direction !== 'RIGHT') direction = 'LEFT';
+            if (event.key === 'ArrowUp' && direction !== 'DOWN') direction = 'UP';
+            if (event.key === 'ArrowRight' && direction !== 'LEFT') direction = 'RIGHT';
+            if (event.key === 'ArrowDown' && direction !== 'UP') direction = 'DOWN';
+        });
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // рисуем еду
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x, food.y, box, box);
+
+            // рисуем змейку
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i === 0) ? 'green' : 'lightgreen';
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                ctx.strokeStyle = '#000';
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            // старые координаты головы змейки
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            // движение змейки
+            if (direction === 'LEFT') snakeX -= box;
+            if (direction === 'UP') snakeY -= box;
+            if (direction === 'RIGHT') snakeX += box;
+            if (direction === 'DOWN') snakeY += box;
+
+            // проверка на поедание еды
+            if (snakeX === food.x && snakeY === food.y) {
+                food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
+            } else {
+                snake.pop(); // удаляем последний элемент змейки
+            }
+
+            // добавляем новую голову змейки
+            const newHead = { x: snakeX, y: snakeY };
+
+            // проверка на столкновение с границами и перенос на противоположную сторону
+            if (snakeX < 0) newHead.x = canvas.width - box; // если вышла за левую границу
+            if (snakeY < 0) newHead.y = canvas.height - box; // если вышла за верхнюю границу
+            if (snakeX >= canvas.width) newHead.x = 0; // если вышла за правую границу
+            if (snakeY >= canvas.height) newHead.y = 0; // если вышла за нижнюю границу
+
+            // проверка на столкновение с самой собой
+            if (collision(newHead, snake)) {
+                clearInterval(game);
+                alert("Игра окончена!");
+                return;
+            }
+
+            snake.unshift(newHead); // добавляем новую голову в начало массива
+        }
+
+        function collision(head, array) {
+            for (let i = 1; i < array.length; i++) { // начинаем с 1, чтобы не проверять столкновение с головой
+                if (head.x === array[i].x && head.y === array[i].y) {
+                    return true; // столкновение с телом змейки
+                }
+            }
+            return false;
+        }
+
+        const game = setInterval(draw, 100); // обновление игры каждые 100 мс
+    </script>
+</body>
+</html>

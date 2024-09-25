@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris</title>
+    <style>
+        /* Центрирование canvas на странице */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+        }
+        /* Стиль canvas, чтобы было видно игровое поле */
+        canvas {
+            background-color: #000;
+            display: block;
+            border: 2px solid #fff;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="tetris" width="200" height="400"></canvas> <!-- Канвас с размером 200x400 для 10x20 клеток -->
+
+<script>
+    const canvas = document.getElementById('tetris');  // Получаем элемент canvas
+    const context = canvas.getContext('2d');  // Устанавливаем 2D-контекст для рисования
+    const scale = 20;  // Масштаб каждой клетки
+    context.scale(scale, scale);  // Масштабируем контекст на основании клеток
+
+    // Функция для создания матрицы, представляющей игровое поле (сетки)
+    function createMatrix(w, h) {
+        const matrix = [];  // Массив, который будет содержать строки
+        while (h--) {  // Пока высота не достигнет 0
+            matrix.push(new Array(w).fill(0));  // Добавляем строку шириной w, заполненную нулями
+        }
+        return matrix;  // Возвращаем матрицу
+    }
+
+    // Функция для создания фигур тетромино и их ротаций
+    function createPiece(type) {
+        switch (type) {  // В зависимости от типа фигуры создаем соответствующую матрицу
+            case 'T':
+                return [
+                    [0, 1, 0],
+                    [1, 1, 1],
+                    [0, 0, 0],
+                ];  // T-образная фигура
+            case 'O':
+                return [
+                    [2, 2],
+                    [2, 2],
+                ];  // Квадрат (O-образная)
+            case 'L':
+                return [
+                    [0, 0, 3],
+                    [3, 3, 3],
+                    [0, 0, 0],
+                ];  // L-образная фигура
+            case 'J':
+                return [
+                    [4, 0, 0],
+                    [4, 4, 4],
+                    [0, 0, 0],
+                ];  // J-образная фигура
+            case 'I':
+                return [
+                    [0, 0, 0, 0],
+                    [5, 5, 5, 5],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                ];  // I-образная фигура
+            case 'S':
+                return [
+                    [0, 6, 6],
+                    [6, 6, 0],
+                    [0, 0, 0],
+                ];  // S-образная фигура
+            case 'Z':
+                return [
+                    [7, 7, 0],
+                    [0, 7, 7],
+                    [0, 0, 0],
+                ];  // Z-образная фигура
+        }
+    }
+
+    // Определение цветов для каждой фигуры
+    const colors = [
+        null,        // Нулевая позиция (пусть будет пустой)
+        '#FF0D72',   // T
+        '#0DC2FF',   // O
+        '#0DFF72',   // L
+        '#F538FF',   // J
+        '#FF8E0D',   // I
+        '#FFE138',   // S
+        '#3877FF',   // Z
+    ];
+
+    // Функция для отрисовки матрицы на экране
+    function drawMatrix(matrix, offset) {
+        matrix.forEach((row, y) => {  // Проходим по каждой строке
+            row.forEach((value, x) => {  // Проходим по каждому значению строки
+                if (value !== 0) {  // Если значение не равно 0, рисуем клетку
+                    context.fillStyle = colors[value];  // Присваиваем соответствующий цвет фигуре
+                    context.fillRect(x + offset.x, y + offset.y, 1, 1);  // Рисуем квадрат
+                }
+            });
+        });
+    }
+
+    // Функция для рисования тонкой полупрозрачной сетки
+    function drawGrid() {
+        context.strokeStyle = 'rgba(255, 255, 255, 0.2)';  // Белая линия с прозрачностью 0.2
+        context.lineWidth = 0.05;  // Очень тонкая линия
+        context.beginPath();  // Начинаем новый путь для рисования
+
+        // Вертикальные линии через каждые 20 пикселей
+        for (let x = 1; x < canvas.width / scale; x++) {
+            context.moveTo(x, 0);  // Начало линии
+            context.lineTo(x, canvas.height / scale);  // Линия вниз до конца экрана
+        }
+
+        // Горизонтальные линии через каждые 20 пикселей
+        for (let y = 1; y < canvas.height / scale; y++) {
+            context.moveTo(0, y);  // Начало линии
+            context.lineTo(canvas.width / scale, y);  // Линия вправо до конца экрана
+        }
+
+        context.stroke();  // Наносим все линии
+    }
+
+    // Функция для интеграции фигуры в игровое поле после её фиксации
+    function merge(arena, player) {
+        player.matrix.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value !== 0) {  // Если значение фигуры не нулевое
+                    arena[y + player.pos.y][x + player.pos.x] = value;  // Копируем значение на игровую сетку
+                }
+            });
+        });
+    }
+
+    // Проверяем столкновение фигуры с другими фигурами или стенками
+    function collide(arena, player) {
+        const [m, o] = [player.matrix, player.pos];  // Получаем текущую матрицу игрока и его позицию
+        for (let y = 0; y < m.length; ++y) {
+            for (let x = 0; x < m[y].length; ++x) {
+                if (m[y][x] !== 0 &&
+                    (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+                    return true;  // Если фигура пересекает другую или стенку
+                }
+            }
+        }
+        return false;
+    }
+
+    // Функция для вращения фигуры
+    function rotate(matrix, dir) {
+        for (let y = 0; y < matrix.length; ++y) {
+            for (let x = 0; x < y; ++x) {
+                // Транспонируем матрицу (меняем строки и столбцы местами)
+                [
+                    matrix[x][y],
+                    matrix[y][x],
+                ] = [
+                    matrix[y][x],
+                    matrix[x][y],
+                ];
+            }
+        }
+
+        // Если вращаем по часовой стрелке — реверсируем строки, если против — реверсируем столбцы
+        if (dir > 0) {
+            matrix.forEach(row => row.reverse());
+        } else {
+            matrix.reverse();
+        }
+    }
+
+    // Функция для того, чтобы игрок двигал фигуру вниз
+    function playerDrop() {
+        player.pos.y++;  // Опускаем фигуру
+        if (collide(arena, player)) {  // Если произошло столкновение
+            player.pos.y--;  // Возвращаем фигуру на позицию выше
+            merge(arena, player);  // Фиксируем фигуру на игровом поле
+            playerReset();  // Создаем новую фигуру
+            arenaSweep();  // Очищаем заполненные линии
+        }
+        dropCounter = 0;  // Сбрасываем счетчик падения
+    }
+
+    // Функция для перемещения игрока влево/вправо
+    function playerMove(dir) {
+        player.pos.x += dir;  // Двигаем фигуру по горизонтали
+        if (collide(arena, player)) {  // Если произошло столкновение
+            player.pos.x -= dir;  // Отменяем движение
+        }
+    }
+
+    // Функция для создания новой фигуры
+    function playerReset() {
+        const pieces = 'TJLOSZI';  // Набор фигур тетромино
+        player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);  // Случайно выбираем фигуру
+        player.pos.y = 0;  // Возвращаем фигуру на самый верх
+        player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);  // Центрируем фигуру по горизонтали
+
+        if (collide(arena, player)) {  // Если новая фигура сразу сталкивается с чем-то
+            arena.forEach(row => row.fill(0));  // Очищаем игровое поле (игра окончена)
+        }
+    }
+
+ 
+  // Очищаем все заполненные линии
+	function arenaSweep() {
+		let rowCount = 0;  // Считаем количество удалённых линий
+		outer: for (let y = arena.length - 1; y >= 0; --y) {  // Проходим от нижней строки к верхней
+        for (let x = 0; x < arena[y].length; ++x) {
+            if (arena[y][x] === 0) {  // Если в линии есть хотя бы одна пустая клетка
+                continue outer;  // Переходим к следующей линии
+            }
+        }
+
+        const row = arena.splice(y, 1)[0].fill(0);  // Удаляем заполненную линию
+        arena.unshift(row);  // Добавляем пустую строку сверху
+        ++rowCount;  // Увеличиваем количество удалённых строк
+
+        ++y;  // Проверяем ту же строку снова, т.к. она теперь сместилась на место удалённой
+    }
+}
+
+    // Функция для отрисовки игры
+    function draw() {
+        context.fillStyle = '#000';  // Заливаем фон черным цветом
+        context.fillRect(0, 0, canvas.width / scale, canvas.height / scale);  // Очищаем весь канвас
+
+        drawMatrix(arena, {x: 0, y: 0});  // Рисуем игровое поле
+        drawMatrix(player.matrix, player.pos);  // Рисуем текущую фигуру игрока
+        drawGrid();  // Рисуем сетку поверх игрового поля
+    }
+
+    let dropCounter = 0;  // Счетчик для контроля скорости падения фигур
+    let dropInterval = 1000;  // Интервал падения (1000 мс = 1 секунда)
+
+    let lastTime = 0;  // Время последнего обновления
+    function update(time = 0) {
+        const deltaTime = time - lastTime;  // Разница между текущим и последним обновлением
+        lastTime = time;
+
+        dropCounter += deltaTime;  // Увеличиваем счетчик времени
+        if (dropCounter > dropInterval) {  // Если прошло достаточно времени
+            playerDrop();  // Двигаем фигуру вниз
+        }
+
+        draw();  // Отрисовываем игру
+        requestAnimationFrame(update);  // Запрашиваем следующий кадр анимации
+    }
+
+    const arena = createMatrix(10, 20);  // Создаем игровую сетку (10 клеток в ширину и 20 в высоту)
+    const player = {
+        pos: {x: 0, y: 0},  // Позиция игрока
+        matrix: null,  // Текущая фигура игрока
+    };
+
+    // Обработка нажатий клавиш
+    document.addEventListener('keydown', event => {
+        if (event.keyCode === 37) {  // Левая стрелка
+            playerMove(-1);  // Двигаем фигуру влево
+        } else if (event.keyCode === 39) {  // Правая стрелка
+            playerMove(1);  // Двигаем фигуру вправо
+        } else if (event.keyCode === 40) {  // Стрелка вниз
+            playerDrop();  // Быстрое падение
+        } else if (event.keyCode === 38) {  // Стрелка вверх
+            rotate(player.matrix, 1);  // Вращаем фигуру по часовой стрелке
+        }
+    });
+
+    playerReset();  // Сбрасываем игрока (создаем первую фигуру)
+    update();  // Запускаем цикл обновления игры
+
+</script>
+</body>
+</html>

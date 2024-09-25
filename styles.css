@@ -176,3 +176,85 @@ footer {
             75% { color: #F09955; }  /* Пурпурный */
             100% { color: #FF5599; } /* Возврат к красному */
        }
+
+/* Стили для секции игр на главной странице */
+.games-preview {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* По умолчанию адаптивная сетка */
+    gap: 20px;
+    padding: 20px;
+}
+
+.game-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.game-item:hover {
+    transform: scale(1.05);
+}
+
+.game-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    transition: opacity 0.3s ease;
+}
+
+.game-item .game-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #f4f4f9;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.game-item:hover .game-title {
+    opacity: 1;
+}
+
+.game-item:hover img {
+    opacity: 0.7;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 1200px) {
+    .games-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 элемента в ряд */
+    }
+}
+
+@media (max-width: 768px) {
+    .games-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 элемента в ряд */
+        gap: 15px; /* Уменьшаем отступы на маленьких экранах */
+    }
+
+    .game-item .game-title {
+        font-size: 1rem;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .games-grid {
+        grid-template-columns: 1fr; /* 1 элемент в ряд на маленьких экранах */
+    }
+}

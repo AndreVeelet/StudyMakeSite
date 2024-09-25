@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра Концентрация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #gameBoard {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px; /* Увеличенный размер шрифта */
+            cursor: pointer;
+            color: white;
+            background-color: #ccc; /* Начальный цвет */
+        }
+        /* Цвета для каждой пары */
+        .pairA { background-color: #ff5733; }
+        .pairB { background-color: #33c3ff; }
+        .pairC { background-color: #75ff33; }
+        .pairD { background-color: #ff93b9; }
+        .pairE { background-color: #ffd233; }
+        .pairF { background-color: #33ff75; }
+        .pairG { background-color: #3357ff; }
+        .pairH { background-color: #ff10a0; }
+        .matched {
+            opacity: 0.7; /* Уменьшаем непрозрачность для совпавших карточек */
+        }
+    </style>
+</head>
+<body>
+
+<h1>Игра Концентрация</h1>
+<button id="restartButton">Начать заново</button>
+<div id="gameBoard"></div>
+
+<script>
+    const cardValues = [
+        { value: 'A', class: 'pairA' },
+        { value: 'A', class: 'pairA' },
+        { value: 'B', class: 'pairB' },
+        { value: 'B', class: 'pairB' },
+        { value: 'C', class: 'pairC' },
+        { value: 'C', class: 'pairC' },
+        { value: 'D', class: 'pairD' },
+        { value: 'D', class: 'pairD' },
+        { value: 'E', class: 'pairE' },
+        { value: 'E', class: 'pairE' },
+        { value: 'F', class: 'pairF' },
+        { value: 'F', class: 'pairF' },
+        { value: 'G', class: 'pairG' },
+        { value: 'G', class: 'pairG' },
+        { value: 'H', class: 'pairH' },
+        { value: 'H', class: 'pairH' }
+    ];
+    let board = document.getElementById('gameBoard');
+    let firstCard, secondCard;
+    let lockBoard = false;
+    let matchedCards = 0;
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function createBoard() {
+        board.innerHTML = '';
+        const shuffledValues = shuffle([...cardValues]);
+        shuffledValues.forEach(({ value, class: cardClass }) => {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.value = value;
+            card.dataset.class = cardClass; // Сохраняем класс карточки
+            card.addEventListener('click', flipCard);
+            board.appendChild(card);
+        });
+    }
+
+    function flipCard() {
+        if (lockBoard || this === firstCard) return;
+        this.classList.add(this.dataset.class); // Добавляем цвет карточки
+        this.textContent = this.dataset.value;
+
+        if (!firstCard) {
+            firstCard = this;
+            return;
+        }
+
+        secondCard = this;
+        lockBoard = true;
+
+        checkForMatch();
+    }
+
+    function checkForMatch() {
+        if (firstCard.dataset.value === secondCard.dataset.value) {
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
+            matchedCards += 2;
+            resetBoard();
+            if (matchedCards === cardValues.length) {
+                setTimeout(() => alert('Поздравляю! Вы выиграли!'), 500);
+            }
+        } else {
+            setTimeout(() => {
+                firstCard.classList.remove(firstCard.dataset.class); // Убираем цвет
+                secondCard.classList.remove(secondCard.dataset.class); // Убираем цвет
+                firstCard.textContent = '';
+                secondCard.textContent = '';
+                resetBoard();
+            }, 1000);
+        }
+    }
+
+    function resetBoard() {
+        [firstCard, secondCard] = [null, null];
+        lockBoard = false;
+    }
+
+    document.getElementById('restartButton').addEventListener('click', () => {
+        matchedCards = 0;
+        createBoard();
+    });
+
+    createBoard();
+</script>
+
+</body>
+</html>
