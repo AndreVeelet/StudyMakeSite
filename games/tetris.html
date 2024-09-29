@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +7,15 @@
     <style>
         /* Центрирование canvas на странице */
         body {
+           font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #000;
+	    background-color: #000;
+	    color: #fff;
         }
         /* Стиль canvas, чтобы было видно игровое поле */
         canvas {
@@ -20,11 +23,34 @@
             display: block;
             border: 2px solid #fff;
         }
+
+    .back-button {
+  	  background-color: #4CAF50;
+ 	  color: white;
+ 	  padding: 10px 20px;
+          text-decoration: none;
+ 	  border-radius: 5px;
+ 	  font-size: 1.1rem;
+ 	  margin-top: 20px;
+ 	  display: inline-block;
+    }
+
+
     </style>
 </head>
 <body>
 
+
+
+<h1>Игра Пятнашки</h1>
+
+<p></p>
+
 <canvas id="tetris" width="200" height="400"></canvas> <!-- Канвас с размером 200x400 для 10x20 клеток -->
+<p>⇦ ⇨ : Влево-Вправо</p>
+<p> ⇩ : Вниз ⇧ : Поворот</p>
+
+<button class="back-button" onclick="history.back()">Назад в каталог игр</button>
 
 <script>
     const canvas = document.getElementById('tetris');  // Получаем элемент canvas

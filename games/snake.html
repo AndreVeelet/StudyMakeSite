@@ -6,21 +6,45 @@
     <title>Игра Змейка</title>
     <style>
         body {
+           font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
-            background-color: #f0f0f0;
             margin: 0;
+	    background-color: #000;
+	    color: #fff;
         }
         canvas {
             border: 1px solid #000;
             background-color: #fff;
+   }
+    .back-button {
+  	  background-color: #4CAF50;
+ 	  color: white;
+ 	  padding: 10px 20px;
+          text-decoration: none;
+ 	  border-radius: 5px;
+ 	  font-size: 1.1rem;
+ 	  margin-top: 20px;
+ 	  display: inline-block;
         }
     </style>
 </head>
 <body>
+    
+
+<h1>Игра Змейка</h1>
+
+<p></p>
+
     <canvas id="gameCanvas" width="400" height="400"></canvas>
+<p></p>
+<p>Управление стрелками на клавиатуре</p>
+<button class="back-button" onclick="history.back()">Назад в каталог игр</button>
+
+
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');

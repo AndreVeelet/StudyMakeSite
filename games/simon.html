@@ -1,18 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
     <title>Simon Game</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
+	    background-color: #000;
+	    color: #fff;
         }
         #game {
             display: grid;
@@ -43,16 +46,33 @@
             padding: 10px 20px;
             cursor: pointer;
         }
+    .back-button {
+  	  background-color: #4CAF50;
+ 	  color: white;
+ 	  padding: 10px 20px;
+          text-decoration: none;
+ 	  border-radius: 5px;
+ 	  font-size: 1.1rem;
+ 	  margin-top: 20px;
+ 	  display: inline-block;
+
+
     </style>
 </head>
 <body>
+<h1>Игра Саймон</h1>
+
     <div id="game">
         <button class="btn" id="green"></button>
         <button class="btn" id="red"></button>
         <button class="btn" id="yellow"></button>
         <button class="btn" id="blue"></button>
     </div>
-    <button id="start">Start</button>
+    <button id="start">Старт</button>
+
+
+<p></p>
+    <button class="back-button" onclick="history.back()">Назад в каталог игр</button>
 
     <script>
         const buttons = ['green', 'red', 'yellow', 'blue'];
@@ -78,7 +98,7 @@
         function nextRound() {
             level++;
             playerSequence = [];
-            startButton.textContent = `Level ${level}`;
+            startButton.textContent = `Уровень ${level}`;
             const randomColor = buttons[Math.floor(Math.random() * buttons.length)];
             gameSequence.push(randomColor);
             playSequence();
@@ -109,7 +129,7 @@
             }
             if (playerSequence.length === gameSequence.length) {
                 if (playerSequence.length === 20) {
-                    alert('Congratulations! You won the game!');
+                    alert('Поздравляем! Вы выиграли!');
                     startGame();
                 } else {
                     setTimeout(nextRound, 1000);
@@ -118,7 +138,7 @@
         }
 
         function gameOver() {
-            alert(`Game Over! You reached level ${level}`);
+            alert(`Игра окончена! Вы достигли уровня ${level}`);
             startGame();
         }
 

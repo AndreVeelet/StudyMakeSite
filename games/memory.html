@@ -13,6 +13,8 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
+	    background-color: #000;
+	    color: #fff;
         }
         #gameBoard {
             display: grid;
@@ -42,13 +44,29 @@
         .matched {
             opacity: 0.7; /* Уменьшаем непрозрачность для совпавших карточек */
         }
+
+    .back-button {
+  	  background-color: #4CAF50;
+ 	  color: white;
+ 	  padding: 10px 20px;
+          text-decoration: none;
+ 	  border-radius: 5px;
+ 	  font-size: 1.1rem;
+ 	  margin-top: 20px;
+ 	  display: inline-block;
+    }
+
     </style>
 </head>
 <body>
 
 <h1>Игра Концентрация</h1>
 <button id="restartButton">Начать заново</button>
+<p></p>
 <div id="gameBoard"></div>
+<p></p>
+
+<button class="back-button" onclick="history.back()">Назад в каталог игр</button>
 
 <script>
     const cardValues = [

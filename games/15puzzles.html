@@ -6,13 +6,16 @@
     <title>Игра Пятнашки</title>
     <style>
         body {
+
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+	    background-color: #000;
+	    color: #fff;
         }
 
         .game-container {
@@ -21,7 +24,8 @@
             grid-template-rows: repeat(4, 100px);
             gap: 5px;
             width: fit-content;
-            background-color: #333;
+            background-color: #e65100;
+
             padding: 5px;
             border-radius: 10px;
         }
@@ -29,9 +33,9 @@
         .tile {
             width: 100px;
             height: 100px;
-            background-color: #4CAF50;
+            background-color: #F4A900;
             color: white;
-            font-size: 2em;
+            font-size: 3em;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -41,18 +45,36 @@
         }
 
         .tile:hover {
-            background-color: #45a049;
+            background-color: #ff6700;
         }
 
         .empty {
-            background-color: #f0f0f0;
+            background-color: #9f3f00;
             cursor: default;
         }
+
+    .back-button {
+  	  background-color: #4CAF50;
+ 	  color: white;
+ 	  padding: 10px 20px;
+          text-decoration: none;
+ 	  border-radius: 5px;
+ 	  font-size: 1.1rem;
+ 	  margin-top: 20px;
+ 	  display: inline-block;
+    }
+
     </style>
 </head>
 <body>
+<h1>Игра Пятнашки</h1>
+
+<p></p>
 
     <div class="game-container" id="game-container"></div>
+<p></p>
+
+<button class="back-button" onclick="history.back()">Назад в каталог игр</button>
 
     <script>
         const size = 4;  // Размер поля 4x4
