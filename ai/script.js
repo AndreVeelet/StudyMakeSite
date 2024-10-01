@@ -156,8 +156,9 @@ function startQuiz() {
 }
 
 function generateOptions(correctWord) {
-   const otherWord = selectRandomWords(words.filter(word => word !== correctWord), 1);
-   const incorrectWords = selectRandomWords(selectedWords.filter(word => (word !== correctWord)&(word !== otherWord)), 3); // Генерируем неправильные ответы
+   
+   const incorrectWords = selectRandomWords(selectedWords.filter(word => (word !== correctWord)), 3); // Генерируем неправильные ответы
+   const otherWord = selectRandomWords(words.filter(word => !selectedWords.includes(word)), 1);
    return [correctWord,otherWord, ...incorrectWords].sort(() => Math.random() - 0.5); // Возвращаем перемешанные варианты ответов
 }
 
