@@ -1,5 +1,3 @@
-let isActive = true; // Переменная для отслеживания активности
-
 // Функция для обновления состояния игры
 function updateGameState() {
     const gameStatus = document.getElementById('gameStatus');
@@ -9,14 +7,16 @@ function updateGameState() {
     gameStatus.innerText = `Игра активна - Последнее обновление: ${currentTime}`;
 }
 
-// Функция, которая будет вызываться перед каждым перерисовыванием экрана
-function keepAwake() {
-    if (isActive) {
-        updateGameState(); // Обновляем состояние игры
-    }
-    
-    requestAnimationFrame(keepAwake); // Запрашиваем следующий кадр
+// Обработчик событий для движения мыши
+function handleMouseMove() {
+    updateGameState(); // Обновляем состояние игры при движении мыши
 }
 
-// Запускаем функцию
-keepAwake();
+// Обработчик событий для нажатий клавиш
+function handleKeyDown() {
+    updateGameState(); // Обновляем состояние игры при нажатии клавиш
+}
+
+// Добавляем обработчики событий для мыши и клавиатуры
+document.addEventListener('mousemove', handleMouseMove);
+document.addEventListener('keydown', handleKeyDown);
