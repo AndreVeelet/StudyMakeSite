@@ -6,8 +6,7 @@ function updateGameState() {
     const currentTime = new Date().toLocaleTimeString();
     
     // Обновляем текст на странице
-    gameStatus.color = white;
-gameStatus.innerText = `Игра активна - Последнее обновление: ${currentTime}`;
+    gameStatus.innerText = `Игра активна - Последнее обновление: ${currentTime}`;
 }
 
 // Функция для запроса блокировки экрана
