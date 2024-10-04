@@ -15,10 +15,10 @@ async function requestWakeLock() {
         wakeLock = await navigator.wakeLock.request('screen');
         console.log('Wake Lock активирован');
         updateGameState(); // Обновляем состояние при активации блокировки
-        
+
         // Обновляем состояние каждые 5 секунд
         setInterval(updateGameState, 5000);
-        
+
         // Освобождаем блокировку при закрытии вкладки
         window.addEventListener('unload', () => {
             if (wakeLock) {
@@ -26,11 +26,17 @@ async function requestWakeLock() {
                 console.log('Wake Lock освобожден');
             }
         });
-        
+
+        // Слушаем событие освобождения блокировки
+        wakeLock.addEventListener('release', () => {
+            console.log('Wake Lock освобожден автоматически');
+            wakeLock = null; // Сбрасываем переменную
+        });
+
     } catch (err) {
         console.error(`${err.name}, ${err.message}`);
     }
 }
 
-// Запрашиваем блокировку экрана при загрузке страницы
-requestWakeLock();
+// Обработчик события кнопки
+document.getElementById('toggleWakeLock').addEventListener('click', requestWakeLock);
