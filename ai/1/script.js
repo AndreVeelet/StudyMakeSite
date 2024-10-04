@@ -1,3 +1,5 @@
+let wakeLock = null; // Переменная для хранения блокировки экрана
+
 // Функция для обновления состояния игры
 function updateGameState() {
     const gameStatus = document.getElementById('gameStatus');
@@ -7,16 +9,28 @@ function updateGameState() {
     gameStatus.innerText = `Игра активна - Последнее обновление: ${currentTime}`;
 }
 
-// Обработчик событий для движения мыши
-function handleMouseMove() {
-    updateGameState(); // Обновляем состояние игры при движении мыши
+// Функция для запроса блокировки экрана
+async function requestWakeLock() {
+    try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        console.log('Wake Lock активирован');
+        updateGameState(); // Обновляем состояние при активации блокировки
+        
+        // Обновляем состояние каждые 5 секунд
+        setInterval(updateGameState, 5000);
+        
+        // Освобождаем блокировку при закрытии вкладки
+        window.addEventListener('unload', () => {
+            if (wakeLock) {
+                wakeLock.release();
+                console.log('Wake Lock освобожден');
+            }
+        });
+        
+    } catch (err) {
+        console.error(`${err.name}, ${err.message}`);
+    }
 }
 
-// Обработчик событий для нажатий клавиш
-function handleKeyDown() {
-    updateGameState(); // Обновляем состояние игры при нажатии клавиш
-}
-
-// Добавляем обработчики событий для мыши и клавиатуры
-document.addEventListener('mousemove', handleMouseMove);
-document.addEventListener('keydown', handleKeyDown);
+// Запрашиваем блокировку экрана при загрузке страницы
+requestWakeLock();
