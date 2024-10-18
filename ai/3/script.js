@@ -4,6 +4,8 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+let fireworks = [];
+
 function createFirework(x, y) {
     const particles = 100; // Количество частиц
     const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
@@ -16,11 +18,42 @@ function createFirework(x, y) {
         const particleX = x + Math.cos(angle) * radius;
         const particleY = y + Math.sin(angle) * radius;
 
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(particleX, particleY, 5, 0, Math.PI * 2);
-        ctx.fill();
+        // Добавляем частицы в массив с начальной скоростью и углом
+        fireworks.push({
+            x: particleX,
+            y: particleY,
+            speedX: Math.cos(angle) * 4,
+            speedY: Math.sin(angle) * 4,
+            color: color,
+            life: 100 // Время жизни частицы
+        });
     }
+}
+
+function updateFireworks() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Очищаем холст
+
+    for (let i = fireworks.length - 1; i >= 0; i--) {
+        const firework = fireworks[i];
+
+        // Обновляем позицию частицы
+        firework.x += firework.speedX;
+        firework.y += firework.speedY;
+        firework.life--;
+
+        // Рисуем частицу
+        ctx.fillStyle = firework.color;
+        ctx.beginPath();
+        ctx.arc(firework.x, firework.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Удаляем частицы, которые "умерли"
+        if (firework.life <= 0) {
+            fireworks.splice(i, 1);
+        }
+    }
+
+    requestAnimationFrame(updateFireworks); // Запускаем следующий кадр анимации
 }
 
 canvas.addEventListener('click', (event) => {
@@ -29,3 +62,6 @@ canvas.addEventListener('click', (event) => {
 
     createFirework(x, y);
 });
+
+// Запускаем анимацию
+updateFireworks();
