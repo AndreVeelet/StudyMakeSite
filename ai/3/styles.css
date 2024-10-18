@@ -1,0 +1,38 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.animated-button {
+    padding: 15px 30px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@keyframes shadow-pulse {
+    0% {
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.5);
+        transform: translate(0, 0);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.7);
+        transform: translate(-2px, -2px);
+    }
+    100% {
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.5);
+        transform: translate(0, 0);
+    }
+}
+
+.animated-button:hover {
+    animation: shadow-pulse 1s infinite;
+}
