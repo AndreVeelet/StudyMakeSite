@@ -13,7 +13,6 @@ function createFirework(x, y) {
     for (let i = 0; i < particles; i++) {
         const angle = Math.random() * 2 * Math.PI; // Случайный угол
         const radius = Math.random() * 100; // Случайный радиус
-        const color = colors[Math.floor(Math.random() * colors.length)];
 
         const particleX = x + Math.cos(angle) * radius;
         const particleY = y + Math.sin(angle) * radius;
@@ -24,7 +23,7 @@ function createFirework(x, y) {
             y: particleY,
             speedX: Math.cos(angle) * 4,
             speedY: Math.sin(angle) * 4,
-            color: color,
+            color: colors[Math.floor(Math.random() * colors.length)],
             life: 100 // Время жизни частицы
         });
     }
@@ -39,6 +38,10 @@ function updateFireworks() {
         // Обновляем позицию частицы
         firework.x += firework.speedX;
         firework.y += firework.speedY;
+
+        // Уменьшаем скорость по вертикали, чтобы создать эффект падения
+        firework.speedY += 0.1; // Гравитация
+
         firework.life--;
 
         // Рисуем частицу
