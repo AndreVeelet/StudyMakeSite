@@ -7,12 +7,12 @@ canvas.height = window.innerHeight;
 let fireworks = [];
 
 function createFirework(x, y) {
-    const particles = 200; // Количество частиц
+    const particles = 400; // Количество частиц
     const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
 
     for (let i = 0; i < particles; i++) {
         const angle = Math.random() * 2 * Math.PI; // Случайный угол
-        const radius = Math.random() * 50; // Случайный радиус
+        const radius = Math.random() * 20; // Случайный радиус
 
         const particleX = x + Math.cos(angle) * radius;
         const particleY = y + Math.sin(angle) * radius;
@@ -47,7 +47,7 @@ function updateFireworks() {
         // Рисуем частицу
         ctx.fillStyle = firework.color;
         ctx.beginPath();
-        ctx.arc(firework.x, firework.y, 2, 0, Math.PI * 2);
+        ctx.arc(firework.x, firework.y, 1, 0, Math.PI * 2);
         ctx.fill();
 
         // Удаляем частицы, которые "умерли"
