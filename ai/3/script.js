@@ -12,7 +12,7 @@ function createFirework(x, y) {
 
     for (let i = 0; i < particles; i++) {
         const angle = Math.random() * 2 * Math.PI; // Случайный угол
-        const radius = Math.random() * 20; // Случайный радиус
+        const radius = Math.random() * 200; // Случайный радиус
 
         const particleX = x + Math.cos(angle) * radius;
         const particleY = y + Math.sin(angle) * radius;
