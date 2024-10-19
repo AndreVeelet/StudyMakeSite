@@ -21,8 +21,8 @@ function createFirework(x, y) {
         fireworks.push({
             x: particleX,
             y: particleY,
-            speedX: Math.cos(angle) * 4,
-            speedY: Math.sin(angle) * 4,
+            speedX: Math.cos(angle) * 2,
+            speedY: Math.sin(angle) * 3,
             color: colors[Math.floor(Math.random() * colors.length)],
             life: 300 // Время жизни частицы
         });
