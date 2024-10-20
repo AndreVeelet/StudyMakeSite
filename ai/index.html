@@ -3,71 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Словесная игра</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-        }
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2em;
-        }
-        #wordDisplay {
-            font-size: 2em;
-            margin: 20px;
-        }
-        #progressContainer {
-            width: 100%;
-            height: 10px; /* Высота прогресс-бара */
-        }
-        .answer {
-            display: block;
-            margin: 5px 0;
-            cursor: pointer;
-        }
-        .hidden {
-            display: none;
-        }
-        .correct {
-            color: green;
-        }
-        .incorrect {
-            color: red;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/progressbar.js/1.1.0/progressbar.min.js"></script>
+    <link rel="stylesheet" href="styles.css"/>
+    <title>Программа с Окнами</title>
 </head>
 <body>
+    <div id="overlay">Приготовьтесь...</div>
+    <h1 style="text-align: center;">Тренировка памяти<br>"Список слов"</h1>
+    
+    <!-- окно настроек -->
+    <div id="window_settings" class="window active" style="width: 300px; height: auto;">
+        <h2>Настройки</h2>
+        <div class="dekor"> 
+            <label><input type="checkbox" id="fullscreenCheckbox"> Полноэкранный режим</label>
+            <p></p>
+            <label for="wordCount">Количество слов (10):</label>
+            
+            <input type="range" id="wordCount" min="5" max="50" value="10" style="height: 3px; width: 200px;" oninput="updateWordCount(this.value)">
+            <p></p>
+            <label for="timeLimit">Время на запоминание (10 сек):</label>
+            <input type="range" id="timeLimit" min="5" max="20" value="10" style="height: 3px; width: 200px;" oninput="updateTimeLimit(this.value)">
+        
+        </div>
+        <button class="custom-button" id="towindow_game">Играть</button>        
+	        
+    </div>
 
-<div id="overlay">Приготовьтесь запоминать порядок слов...</div>
-<h1>Словесная игра</h1>
+    <!-- Второе окно -->
+    <div id="window_game" class="window" style="width: 300px; height: auto;">
+        <h2>Запоминай порядок слов</h2>
+        <div id="progressBar">           <!-- Контейнер для прогресс-бара -->
+            <div id="progress"></div>
+        </div>
+        <h3 id="id_word"></h3>
+        <div id="wordDisplay" class="dekor"> </div>
+    </div>
 
-<label for="wordCount">Количество слов (10):</label>
-<input type="range" id="wordCount" min="5" max="50" value="10" oninput="updateWordCount(this.value)">
-
-<label for="timeLimit">Время на запоминание (10 сек):</label>
-<input type="range" id="timeLimit" min="5" max="20" value="10" oninput="updateTimeLimit(this.value)">
-
-<button id="startButton">Старт</button>
-<div id="progressContainer"></div> <!-- Контейнер для прогресс-бара -->
-<div id="wordDisplay"></div>
-<div id="quiz" class="hidden"></div>
-<div id="result" class="hidden"></div>
-
-<script src="script.js"></script>
+    <!-- Третье окно -->
+    <div id="window_result" class="window" style="width: 300px; height: auto;">
+        <div id="quiz" class="hidden"></div>
+        <div id="result" class="hidden"></div>
+        <p></p>
+        <button id="backTowindow_settings">Назад</button>
+    </div>
+   
+    <script src="script.js"></script>
 </body>
 </html>
